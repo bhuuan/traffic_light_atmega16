@@ -3,7 +3,7 @@
 ;(C) Copyright 1998-2014 Pavel Haiduc, HP InfoTech s.r.l.
 ;http://www.hpinfotech.com
 
-;Build configuration    : Debug
+;Build configuration    : Release
 ;Chip type              : ATmega16A
 ;Program type           : Application
 ;Clock frequency        : 8.000000 MHz
@@ -1297,9 +1297,7 @@ __KhoiTaoNgatINT0:
 ;#define DenDo21     PORTA.5
 ;#define DenDo22     PORTB.1
 ;
-;#define MENU        PIND.2
-;#define TANG        PIND.5
-;#define GIAM        PIND.6
+;#define MODE        PIND.2
 ;
 ;#define COT1        PORTB.4
 ;#define COT2        PORTB.5
@@ -1338,7 +1336,7 @@ __KhoiTaoNgatINT0:
 ;
 ;//NGAT INT0
 ;interrupt [EXT_INT0] void ext_int0_isr(void)
-; 0000 003B {
+; 0000 0039 {
 
 	.CSEG
 _ext_int0_isr:
@@ -1347,33 +1345,33 @@ _ext_int0_isr:
 	ST   -Y,R30
 	IN   R30,SREG
 	ST   -Y,R30
-; 0000 003C   if((PIND & (1<<PIND2))== 0)
+; 0000 003A   if(MODE == 0)
 	SBIC 0x10,2
 	RJMP _0x9
-; 0000 003D   {
-; 0000 003E         while((PIND & (1<<PIND2))== 0);
+; 0000 003B   {
+; 0000 003C         while(MODE == 0);
 _0xA:
 	SBIS 0x10,2
 	RJMP _0xA
-; 0000 003F         CheDo = CheDo + 1;
+; 0000 003D         CheDo = CheDo + 1;
 	LDS  R30,_CheDo
 	SUBI R30,-LOW(1)
 	STS  _CheDo,R30
-; 0000 0040         if(CheDo > 1)
+; 0000 003E         if(CheDo > 1)
 	LDS  R26,_CheDo
 	CPI  R26,LOW(0x2)
 	BRLO _0xD
-; 0000 0041         {
-; 0000 0042             CheDo = 0;
+; 0000 003F         {
+; 0000 0040             CheDo = 0;
 	LDI  R30,LOW(0)
 	STS  _CheDo,R30
-; 0000 0043         }
-; 0000 0044         Flag = 0;
+; 0000 0041         }
+; 0000 0042         Flag = 0;
 _0xD:
 	LDI  R30,LOW(0)
 	STS  _Flag,R30
-; 0000 0045   }
-; 0000 0046 }
+; 0000 0043   }
+; 0000 0044 }
 _0x9:
 	LD   R30,Y+
 	OUT  SREG,R30
@@ -1384,7 +1382,7 @@ _0x9:
 ;
 ;//NGAT TIMER0
 ;interrupt [TIM0_OVF] void timer0_ovf_isr(void)
-; 0000 004A {
+; 0000 0048 {
 _timer0_ovf_isr:
 ; .FSTART _timer0_ovf_isr
 	ST   -Y,R0
@@ -1400,8 +1398,8 @@ _timer0_ovf_isr:
 	ST   -Y,R31
 	IN   R30,SREG
 	ST   -Y,R30
-; 0000 004B 
-; 0000 004C    Dem++;
+; 0000 0049 
+; 0000 004A    Dem++;
 	LDI  R26,LOW(_Dem)
 	LDI  R27,HIGH(_Dem)
 	LD   R30,X+
@@ -1409,7 +1407,7 @@ _timer0_ovf_isr:
 	ADIW R30,1
 	ST   -X,R31
 	ST   -X,R30
-; 0000 004D    if(Dem>=5000)
+; 0000 004B    if(Dem>=5000)
 	LDS  R26,_Dem
 	LDS  R27,_Dem+1
 	CPI  R26,LOW(0x1388)
@@ -1417,236 +1415,236 @@ _timer0_ovf_isr:
 	CPC  R27,R30
 	BRSH PC+2
 	RJMP _0xE
-; 0000 004E    {
-; 0000 004F      if(CheDo==0)
+; 0000 004C    {
+; 0000 004D      if(CheDo==0)
 	LDS  R30,_CheDo
 	CPI  R30,0
 	BREQ PC+2
 	RJMP _0xF
-; 0000 0050      {
-; 0000 0051         if(Flag==0)
+; 0000 004E      {
+; 0000 004F         if(Flag==0)
 	LDS  R30,_Flag
 	CPI  R30,0
 	BRNE _0x10
-; 0000 0052         {
-; 0000 0053            Do1 = Xanh2 + Vang2;
+; 0000 0050         {
+; 0000 0051            Do1 = Xanh2 + Vang2;
 	MOV  R30,R11
 	ADD  R30,R8
 	MOV  R9,R30
-; 0000 0054            DemDo1 = Do1;
+; 0000 0052            DemDo1 = Do1;
 	STS  _DemDo1,R9
-; 0000 0055            DemXanh2 = Xanh2+1;
+; 0000 0053            DemXanh2 = Xanh2+1;
 	MOV  R30,R8
 	SUBI R30,-LOW(1)
 	STS  _DemXanh2,R30
-; 0000 0056            DemVang2 = Vang2+1;
+; 0000 0054            DemVang2 = Vang2+1;
 	MOV  R30,R11
 	SUBI R30,-LOW(1)
 	STS  _DemVang2,R30
-; 0000 0057            Do2 = Xanh1 + Vang1;
+; 0000 0055            Do2 = Xanh1 + Vang1;
 	MOV  R30,R6
 	ADD  R30,R7
 	MOV  R10,R30
-; 0000 0058            DemDo2 = Do2;
+; 0000 0056            DemDo2 = Do2;
 	STS  _DemDo2,R10
-; 0000 0059            DemXanh1 = Xanh1+1;
+; 0000 0057            DemXanh1 = Xanh1+1;
 	MOV  R30,R7
 	SUBI R30,-LOW(1)
 	MOV  R13,R30
-; 0000 005A            DemVang1 = Vang1+1;
+; 0000 0058            DemVang1 = Vang1+1;
 	MOV  R30,R6
 	SUBI R30,-LOW(1)
 	MOV  R12,R30
-; 0000 005B            Flag =1;
+; 0000 0059            Flag =1;
 	LDI  R30,LOW(1)
 	STS  _Flag,R30
-; 0000 005C         }
-; 0000 005D         if(TenDuong==0)
+; 0000 005A         }
+; 0000 005B         if(TenDuong==0)
 _0x10:
 	LDS  R30,_TenDuong
 	CPI  R30,0
 	BRNE _0x11
-; 0000 005E         {
-; 0000 005F            _DenDo11();
+; 0000 005C         {
+; 0000 005D            _DenDo11();
 	RCALL __DenDo11
-; 0000 0060            if(DemDo1>=0)
+; 0000 005E            if(DemDo1>=0)
 	LDS  R26,_DemDo1
 	CPI  R26,0
 	BRLT _0x12
-; 0000 0061            {
-; 0000 0062               _TachSo(DemDo1,&CacSo[1],&CacSo[0]);
+; 0000 005F            {
+; 0000 0060               _TachSo(DemDo1,&CacSo[1],&CacSo[0]);
 	LDS  R30,_DemDo1
 	ST   -Y,R30
 	RCALL SUBOPT_0x0
-; 0000 0063               _TachSo(DemDo1,&CacSo[5],&CacSo[4]);
+; 0000 0061               _TachSo(DemDo1,&CacSo[5],&CacSo[4]);
 	LDS  R30,_DemDo1
 	ST   -Y,R30
 	RCALL SUBOPT_0x1
-; 0000 0064              DemDo1--;
+; 0000 0062              DemDo1--;
 	LDS  R30,_DemDo1
 	SUBI R30,LOW(1)
 	STS  _DemDo1,R30
-; 0000 0065              if(DemXanh2>=1)
+; 0000 0063              if(DemXanh2>=1)
 	LDS  R26,_DemXanh2
 	CPI  R26,LOW(0x1)
 	BRLT _0x13
-; 0000 0066              {
-; 0000 0067                 DemXanh2--;
+; 0000 0064              {
+; 0000 0065                 DemXanh2--;
 	LDS  R30,_DemXanh2
 	SUBI R30,LOW(1)
 	STS  _DemXanh2,R30
-; 0000 0068                 _DenXanh21();
+; 0000 0066                 _DenXanh21();
 	RCALL __DenXanh21
-; 0000 0069                 _TachSo(DemXanh2,&CacSo[3],&CacSo[2]);
+; 0000 0067                 _TachSo(DemXanh2,&CacSo[3],&CacSo[2]);
 	LDS  R30,_DemXanh2
 	RCALL SUBOPT_0x2
-; 0000 006A                 _TachSo(DemXanh2,&CacSo[7],&CacSo[6]);
+; 0000 0068                 _TachSo(DemXanh2,&CacSo[7],&CacSo[6]);
 	LDS  R30,_DemXanh2
 	RCALL SUBOPT_0x3
-; 0000 006B              }
-; 0000 006C              if(DemXanh2==0)
+; 0000 0069              }
+; 0000 006A              if(DemXanh2==0)
 _0x13:
 	LDS  R30,_DemXanh2
 	CPI  R30,0
 	BRNE _0x14
-; 0000 006D              {
-; 0000 006E                 if(DemVang2>=1)
+; 0000 006B              {
+; 0000 006C                 if(DemVang2>=1)
 	LDS  R26,_DemVang2
 	CPI  R26,LOW(0x1)
 	BRLT _0x15
-; 0000 006F                 {
-; 0000 0070                     DemVang2--;
+; 0000 006D                 {
+; 0000 006E                     DemVang2--;
 	LDS  R30,_DemVang2
 	SUBI R30,LOW(1)
 	STS  _DemVang2,R30
-; 0000 0071                     _DenVang21();
+; 0000 006F                     _DenVang21();
 	RCALL __DenVang21
-; 0000 0072                     if(DemVang2==0)
+; 0000 0070                     if(DemVang2==0)
 	LDS  R30,_DemVang2
 	CPI  R30,0
 	BRNE _0x16
-; 0000 0073                     {
-; 0000 0074                         TenDuong=1;
+; 0000 0071                     {
+; 0000 0072                         TenDuong=1;
 	LDI  R30,LOW(1)
 	STS  _TenDuong,R30
-; 0000 0075 
-; 0000 0076                     }
-; 0000 0077                     _TachSo(DemVang2,&CacSo[3],&CacSo[2]);
+; 0000 0073 
+; 0000 0074                     }
+; 0000 0075                     _TachSo(DemVang2,&CacSo[3],&CacSo[2]);
 _0x16:
 	LDS  R30,_DemVang2
 	RCALL SUBOPT_0x2
-; 0000 0078                     _TachSo(DemVang2,&CacSo[7],&CacSo[6]);
+; 0000 0076                     _TachSo(DemVang2,&CacSo[7],&CacSo[6]);
 	LDS  R30,_DemVang2
 	RCALL SUBOPT_0x3
-; 0000 0079                 }
-; 0000 007A              }
+; 0000 0077                 }
+; 0000 0078              }
 _0x15:
-; 0000 007B 
-; 0000 007C            }
+; 0000 0079 
+; 0000 007A            }
 _0x14:
-; 0000 007D             _HienThiLed(CacSo);
+; 0000 007B             _HienThiLed(CacSo);
 _0x12:
 	RJMP _0x155
-; 0000 007E         }
-; 0000 007F 
-; 0000 0080 
-; 0000 0081        else if(TenDuong==1)
+; 0000 007C         }
+; 0000 007D 
+; 0000 007E 
+; 0000 007F        else if(TenDuong==1)
 _0x11:
 	LDS  R26,_TenDuong
 	CPI  R26,LOW(0x1)
 	BRNE _0x18
-; 0000 0082         {
-; 0000 0083            _DenDo21();
+; 0000 0080         {
+; 0000 0081            _DenDo21();
 	RCALL __DenDo21
-; 0000 0084            if(DemDo2>=0)
+; 0000 0082            if(DemDo2>=0)
 	LDS  R26,_DemDo2
 	CPI  R26,0
 	BRLT _0x19
-; 0000 0085            {
-; 0000 0086              _TachSo(DemDo2,&CacSo[3],&CacSo[2]);
+; 0000 0083            {
+; 0000 0084              _TachSo(DemDo2,&CacSo[3],&CacSo[2]);
 	LDS  R30,_DemDo2
 	RCALL SUBOPT_0x2
-; 0000 0087              _TachSo(DemDo2,&CacSo[7],&CacSo[6]);
+; 0000 0085              _TachSo(DemDo2,&CacSo[7],&CacSo[6]);
 	LDS  R30,_DemDo2
 	RCALL SUBOPT_0x3
-; 0000 0088              DemDo2--;
+; 0000 0086              DemDo2--;
 	LDS  R30,_DemDo2
 	SUBI R30,LOW(1)
 	STS  _DemDo2,R30
-; 0000 0089 
-; 0000 008A              if(DemXanh1>=1)
+; 0000 0087 
+; 0000 0088              if(DemXanh1>=1)
 	LDI  R30,LOW(1)
 	CP   R13,R30
 	BRLT _0x1A
-; 0000 008B              {
-; 0000 008C                 DemXanh1--;
+; 0000 0089              {
+; 0000 008A                 DemXanh1--;
 	DEC  R13
-; 0000 008D                 _DenXanh11();
+; 0000 008B                 _DenXanh11();
 	RCALL __DenXanh11
-; 0000 008E                 _TachSo(DemXanh1,&CacSo[1],&CacSo[0]);
+; 0000 008C                 _TachSo(DemXanh1,&CacSo[1],&CacSo[0]);
 	ST   -Y,R13
 	RCALL SUBOPT_0x0
-; 0000 008F                 _TachSo(DemXanh1,&CacSo[5],&CacSo[4]);
+; 0000 008D                 _TachSo(DemXanh1,&CacSo[5],&CacSo[4]);
 	ST   -Y,R13
 	RCALL SUBOPT_0x1
-; 0000 0090              }
-; 0000 0091              if(DemXanh1==0)
+; 0000 008E              }
+; 0000 008F              if(DemXanh1==0)
 _0x1A:
 	TST  R13
 	BRNE _0x1B
-; 0000 0092              {
-; 0000 0093                 if(DemVang1>=1)
+; 0000 0090              {
+; 0000 0091                 if(DemVang1>=1)
 	LDI  R30,LOW(1)
 	CP   R12,R30
 	BRLT _0x1C
-; 0000 0094                 {
-; 0000 0095                     DemVang1--;
+; 0000 0092                 {
+; 0000 0093                     DemVang1--;
 	DEC  R12
-; 0000 0096                     _DenVang11();
+; 0000 0094                     _DenVang11();
 	RCALL __DenVang11
-; 0000 0097                     if(DemVang1==0)
+; 0000 0095                     if(DemVang1==0)
 	TST  R12
 	BRNE _0x1D
-; 0000 0098                     {
-; 0000 0099                         TenDuong=0;
+; 0000 0096                     {
+; 0000 0097                         TenDuong=0;
 	LDI  R30,LOW(0)
 	STS  _TenDuong,R30
-; 0000 009A                         Flag =0;
+; 0000 0098                         Flag =0;
 	STS  _Flag,R30
-; 0000 009B                     }
-; 0000 009C                     _TachSo(DemVang1,&CacSo[1],&CacSo[0]);
+; 0000 0099                     }
+; 0000 009A                     _TachSo(DemVang1,&CacSo[1],&CacSo[0]);
 _0x1D:
 	ST   -Y,R12
 	RCALL SUBOPT_0x0
-; 0000 009D                     _TachSo(DemVang1,&CacSo[5],&CacSo[4]);
+; 0000 009B                     _TachSo(DemVang1,&CacSo[5],&CacSo[4]);
 	ST   -Y,R12
 	RCALL SUBOPT_0x1
-; 0000 009E                 }
-; 0000 009F              }
+; 0000 009C                 }
+; 0000 009D              }
 _0x1C:
-; 0000 00A0            }
+; 0000 009E            }
 _0x1B:
-; 0000 00A1            _HienThiLed(CacSo);
+; 0000 009F            _HienThiLed(CacSo);
 _0x19:
 _0x155:
 	LDI  R26,LOW(_CacSo)
 	LDI  R27,HIGH(_CacSo)
 	RCALL __HienThiLed
-; 0000 00A2         }
-; 0000 00A3      }
+; 0000 00A0         }
+; 0000 00A1      }
 _0x18:
-; 0000 00A4      Dem=0;
+; 0000 00A2      Dem=0;
 _0xF:
 	LDI  R30,LOW(0)
 	STS  _Dem,R30
 	STS  _Dem+1,R30
-; 0000 00A5    }
-; 0000 00A6 
-; 0000 00A7    TCNT0 =56;
+; 0000 00A3    }
+; 0000 00A4 
+; 0000 00A5    TCNT0 =56;
 _0xE:
 	LDI  R30,LOW(56)
 	OUT  0x32,R30
-; 0000 00A8 }
+; 0000 00A6 }
 	LD   R30,Y+
 	OUT  SREG,R30
 	LD   R31,Y+
@@ -1665,139 +1663,139 @@ _0xE:
 ;
 ;//--------------------------CHUONG TRINH CHINH--------------------------
 ;void main(void)
-; 0000 00AC {
+; 0000 00AA {
 _main:
 ; .FSTART _main
-; 0000 00AD     char i;
-; 0000 00AE     //signed char a[8];
-; 0000 00AF 
-; 0000 00B0     DDRA = 0xFF;
+; 0000 00AB     char i;
+; 0000 00AC     //signed char a[8];
+; 0000 00AD 
+; 0000 00AE     DDRA = 0xFF;
 ;	i -> R17
 	LDI  R30,LOW(255)
 	OUT  0x1A,R30
-; 0000 00B1     DDRB = 0xFF;
+; 0000 00AF     DDRB = 0xFF;
 	OUT  0x17,R30
-; 0000 00B2     DDRC = 0xFF;
+; 0000 00B0     DDRC = 0xFF;
 	OUT  0x14,R30
-; 0000 00B3     DDRD.0 = 1;
+; 0000 00B1     DDRD.0 = 1;
 	SBI  0x11,0
-; 0000 00B4     DDRD.1 = 1;
+; 0000 00B2     DDRD.1 = 1;
 	SBI  0x11,1
-; 0000 00B5     DDRD.3 = 1;
+; 0000 00B3     DDRD.3 = 1;
 	SBI  0x11,3
-; 0000 00B6     DDRD.4 = 1;
+; 0000 00B4     DDRD.4 = 1;
 	SBI  0x11,4
-; 0000 00B7 
-; 0000 00B8     DDRD.2 = 0;
+; 0000 00B5 
+; 0000 00B6     DDRD.2 = 0;
 	CBI  0x11,2
-; 0000 00B9     DDRD.5 = 0;
+; 0000 00B7     DDRD.5 = 0;
 	CBI  0x11,5
-; 0000 00BA     DDRD.6 = 0;
+; 0000 00B8     DDRD.6 = 0;
 	CBI  0x11,6
-; 0000 00BB 
-; 0000 00BC     PORTA = 0x00;
+; 0000 00B9 
+; 0000 00BA     PORTA = 0x00;
 	LDI  R30,LOW(0)
 	OUT  0x1B,R30
-; 0000 00BD     PORTC = 0xFF;
+; 0000 00BB     PORTC = 0xFF;
 	LDI  R30,LOW(255)
 	OUT  0x15,R30
-; 0000 00BE     PORTB.0 = 0;
+; 0000 00BC     PORTB.0 = 0;
 	CBI  0x18,0
-; 0000 00BF     PORTB.1 = 0;
+; 0000 00BD     PORTB.1 = 0;
 	CBI  0x18,1
-; 0000 00C0     PORTB.2 = 0;
+; 0000 00BE     PORTB.2 = 0;
 	CBI  0x18,2
-; 0000 00C1     PORTB.3 = 0;
+; 0000 00BF     PORTB.3 = 0;
 	CBI  0x18,3
-; 0000 00C2 
-; 0000 00C3     PORTB.4 = 1;
+; 0000 00C0 
+; 0000 00C1     PORTB.4 = 1;
 	RCALL SUBOPT_0x4
-; 0000 00C4     PORTB.5 = 1;
-; 0000 00C5     PORTB.6 = 1;
-; 0000 00C6     PORTB.7 = 1;
-; 0000 00C7     PORTD.0 = 1;
-; 0000 00C8     PORTD.1 = 1;
-; 0000 00C9     PORTD.3 = 1;
-; 0000 00CA     PORTD.4 = 1;
-; 0000 00CB 
-; 0000 00CC _KhoiTaoNgatINT0();
+; 0000 00C2     PORTB.5 = 1;
+; 0000 00C3     PORTB.6 = 1;
+; 0000 00C4     PORTB.7 = 1;
+; 0000 00C5     PORTD.0 = 1;
+; 0000 00C6     PORTD.1 = 1;
+; 0000 00C7     PORTD.3 = 1;
+; 0000 00C8     PORTD.4 = 1;
+; 0000 00C9 
+; 0000 00CA _KhoiTaoNgatINT0();
 	RCALL __KhoiTaoNgatINT0
-; 0000 00CD _KhoiTaoTimer0();
+; 0000 00CB _KhoiTaoTimer0();
 	RCALL __KhoiTaoTimer0
-; 0000 00CE _NgatToanCuc(1);
+; 0000 00CC _NgatToanCuc(1);
 	LDI  R26,LOW(1)
 	RCALL __NgatToanCuc
-; 0000 00CF 
-; 0000 00D0 while (1)
+; 0000 00CD 
+; 0000 00CE while (1)
 _0x44:
-; 0000 00D1       {
-; 0000 00D2          _HienThiLed(CacSo);
+; 0000 00CF       {
+; 0000 00D0          _HienThiLed(CacSo);
 	LDI  R26,LOW(_CacSo)
 	LDI  R27,HIGH(_CacSo)
 	RCALL __HienThiLed
-; 0000 00D3          while(CheDo==1)
+; 0000 00D1          while(CheDo==1)
 _0x47:
 	LDS  R26,_CheDo
 	CPI  R26,LOW(0x1)
 	BRNE _0x49
-; 0000 00D4          {
-; 0000 00D5                 DenXanh11 =0;
+; 0000 00D2          {
+; 0000 00D3                 DenXanh11 =0;
 	CBI  0x1B,0
-; 0000 00D6                 DenXanh12 = 0;
+; 0000 00D4                 DenXanh12 = 0;
 	CBI  0x1B,6
-; 0000 00D7                 DenDo11 = 0;
+; 0000 00D5                 DenDo11 = 0;
 	CBI  0x1B,2
-; 0000 00D8                 DenDo12 = 0;
+; 0000 00D6                 DenDo12 = 0;
 	CBI  0x18,0
-; 0000 00D9                 DenXanh21 = 0;
+; 0000 00D7                 DenXanh21 = 0;
 	CBI  0x1B,3
-; 0000 00DA                 DenXanh22 = 0;
+; 0000 00D8                 DenXanh22 = 0;
 	CBI  0x18,3
-; 0000 00DB                 DenDo21 = 0;
+; 0000 00D9                 DenDo21 = 0;
 	CBI  0x1B,5
-; 0000 00DC                 DenDo22 = 0;
+; 0000 00DA                 DenDo22 = 0;
 	CBI  0x18,1
-; 0000 00DD 
-; 0000 00DE                 DenVang11 = 1;
+; 0000 00DB 
+; 0000 00DC                 DenVang11 = 1;
 	SBI  0x1B,1
-; 0000 00DF                 DenVang12 = 1;
+; 0000 00DD                 DenVang12 = 1;
 	SBI  0x1B,7
-; 0000 00E0                 DenVang21 = 1;
+; 0000 00DE                 DenVang21 = 1;
 	SBI  0x1B,4
-; 0000 00E1                 DenVang22 = 1;
+; 0000 00DF                 DenVang22 = 1;
 	SBI  0x18,2
-; 0000 00E2                 delay_ms(1000);
+; 0000 00E0                 delay_ms(1000);
 	LDI  R26,LOW(1000)
 	LDI  R27,HIGH(1000)
 	CALL _delay_ms
-; 0000 00E3                 DenVang11 = 0;
+; 0000 00E1                 DenVang11 = 0;
 	CBI  0x1B,1
-; 0000 00E4                 DenVang12 = 0;
+; 0000 00E2                 DenVang12 = 0;
 	CBI  0x1B,7
-; 0000 00E5                 DenVang21 = 0;
+; 0000 00E3                 DenVang21 = 0;
 	CBI  0x1B,4
-; 0000 00E6                 DenVang22 = 0;
+; 0000 00E4                 DenVang22 = 0;
 	CBI  0x18,2
-; 0000 00E7                 delay_ms(1000);
+; 0000 00E5                 delay_ms(1000);
 	LDI  R26,LOW(1000)
 	LDI  R27,HIGH(1000)
 	CALL _delay_ms
-; 0000 00E8          }
+; 0000 00E6          }
 	RJMP _0x47
 _0x49:
-; 0000 00E9       }
+; 0000 00E7       }
 	RJMP _0x44
-; 0000 00EA }
+; 0000 00E8 }
 _0x6A:
 	RJMP _0x6A
 ; .FEND
 ;
 ;//-------------------CHUONG TRINH CON-----------------------------
 ;void _TachSo(signed char Dem, signed char *Chuc, signed char *DonVi)
-; 0000 00EE {
+; 0000 00EC {
 __TachSo:
 ; .FSTART __TachSo
-; 0000 00EF     *Chuc = Dem/10;
+; 0000 00ED     *Chuc = Dem/10;
 	ST   -Y,R27
 	ST   -Y,R26
 ;	Dem -> Y+4
@@ -1808,245 +1806,245 @@ __TachSo:
 	LDD  R26,Y+2
 	LDD  R27,Y+2+1
 	ST   X,R30
-; 0000 00F0     *DonVi =Dem%10;
+; 0000 00EE     *DonVi =Dem%10;
 	RCALL SUBOPT_0x5
 	CALL __MODW21
 	LD   R26,Y
 	LDD  R27,Y+1
 	ST   X,R30
-; 0000 00F1 }
+; 0000 00EF }
 	ADIW R28,5
 	RET
 ; .FEND
 ;
 ;void _QuetCot(char TenCot)
-; 0000 00F4 {
+; 0000 00F2 {
 __QuetCot:
 ; .FSTART __QuetCot
-; 0000 00F5     switch(TenCot)
+; 0000 00F3     switch(TenCot)
 	ST   -Y,R26
 ;	TenCot -> Y+0
 	LD   R30,Y
 	LDI  R31,0
-; 0000 00F6     {
-; 0000 00F7         case 0:
+; 0000 00F4     {
+; 0000 00F5         case 0:
 	SBIW R30,0
 	BRNE _0x6E
-; 0000 00F8         {
-; 0000 00F9             COT1 =1;
+; 0000 00F6         {
+; 0000 00F7             COT1 =1;
 	RCALL SUBOPT_0x4
-; 0000 00FA             COT2 =1;
-; 0000 00FB             COT3 =1;
-; 0000 00FC             COT4 =1;
-; 0000 00FD             COT5 =1;
-; 0000 00FE             COT6 =1;
-; 0000 00FF             COT7 =1;
-; 0000 0100             COT8 =1;
-; 0000 0101             break;
+; 0000 00F8             COT2 =1;
+; 0000 00F9             COT3 =1;
+; 0000 00FA             COT4 =1;
+; 0000 00FB             COT5 =1;
+; 0000 00FC             COT6 =1;
+; 0000 00FD             COT7 =1;
+; 0000 00FE             COT8 =1;
+; 0000 00FF             break;
 	RJMP _0x6D
-; 0000 0102         }
-; 0000 0103          case 1:
+; 0000 0100         }
+; 0000 0101          case 1:
 _0x6E:
 	CPI  R30,LOW(0x1)
 	LDI  R26,HIGH(0x1)
 	CPC  R31,R26
 	BRNE _0x7F
-; 0000 0104         {
-; 0000 0105             COT1 =0;
+; 0000 0102         {
+; 0000 0103             COT1 =0;
 	CBI  0x18,4
-; 0000 0106             COT2 =1;
+; 0000 0104             COT2 =1;
 	RCALL SUBOPT_0x6
-; 0000 0107             COT3 =1;
-; 0000 0108             COT4 =1;
-; 0000 0109             COT5 =1;
-; 0000 010A             COT6 =1;
+; 0000 0105             COT3 =1;
+; 0000 0106             COT4 =1;
+; 0000 0107             COT5 =1;
+; 0000 0108             COT6 =1;
 	SBI  0x12,1
-; 0000 010B             COT7 =1;
+; 0000 0109             COT7 =1;
 	SBI  0x12,3
-; 0000 010C             COT8 =1;
+; 0000 010A             COT8 =1;
 	SBI  0x12,4
-; 0000 010D             break;
+; 0000 010B             break;
 	RJMP _0x6D
-; 0000 010E         }
-; 0000 010F          case 2:
+; 0000 010C         }
+; 0000 010D          case 2:
 _0x7F:
 	CPI  R30,LOW(0x2)
 	LDI  R26,HIGH(0x2)
 	CPC  R31,R26
 	BRNE _0x90
-; 0000 0110         {
-; 0000 0111             COT1 =1;
+; 0000 010E         {
+; 0000 010F             COT1 =1;
 	SBI  0x18,4
-; 0000 0112             COT2 =0;
+; 0000 0110             COT2 =0;
 	CBI  0x18,5
-; 0000 0113             COT3 =1;
+; 0000 0111             COT3 =1;
 	SBI  0x18,6
-; 0000 0114             COT4 =1;
+; 0000 0112             COT4 =1;
 	SBI  0x18,7
-; 0000 0115             COT5 =1;
+; 0000 0113             COT5 =1;
 	RCALL SUBOPT_0x7
-; 0000 0116             COT6 =1;
-; 0000 0117             COT7 =1;
-; 0000 0118             COT8 =1;
-; 0000 0119             break;
+; 0000 0114             COT6 =1;
+; 0000 0115             COT7 =1;
+; 0000 0116             COT8 =1;
+; 0000 0117             break;
 	RJMP _0x6D
-; 0000 011A         }
-; 0000 011B          case 3:
+; 0000 0118         }
+; 0000 0119          case 3:
 _0x90:
 	CPI  R30,LOW(0x3)
 	LDI  R26,HIGH(0x3)
 	CPC  R31,R26
 	BRNE _0xA1
-; 0000 011C         {
-; 0000 011D             COT1 =1;
+; 0000 011A         {
+; 0000 011B             COT1 =1;
 	SBI  0x18,4
-; 0000 011E             COT2 =1;
+; 0000 011C             COT2 =1;
 	SBI  0x18,5
-; 0000 011F             COT3 =0;
+; 0000 011D             COT3 =0;
 	CBI  0x18,6
-; 0000 0120             COT4 =1;
+; 0000 011E             COT4 =1;
 	SBI  0x18,7
-; 0000 0121             COT5 =1;
+; 0000 011F             COT5 =1;
 	RCALL SUBOPT_0x7
-; 0000 0122             COT6 =1;
-; 0000 0123             COT7 =1;
-; 0000 0124             COT8 =1;
-; 0000 0125             break;
+; 0000 0120             COT6 =1;
+; 0000 0121             COT7 =1;
+; 0000 0122             COT8 =1;
+; 0000 0123             break;
 	RJMP _0x6D
-; 0000 0126         }
-; 0000 0127          case 4:
+; 0000 0124         }
+; 0000 0125          case 4:
 _0xA1:
 	CPI  R30,LOW(0x4)
 	LDI  R26,HIGH(0x4)
 	CPC  R31,R26
 	BRNE _0xB2
-; 0000 0128         {
-; 0000 0129             COT1 =1;
+; 0000 0126         {
+; 0000 0127             COT1 =1;
 	SBI  0x18,4
-; 0000 012A             COT2 =1;
+; 0000 0128             COT2 =1;
 	SBI  0x18,5
-; 0000 012B             COT3 =1;
+; 0000 0129             COT3 =1;
 	SBI  0x18,6
-; 0000 012C             COT4 =0;
+; 0000 012A             COT4 =0;
 	CBI  0x18,7
-; 0000 012D             COT5 =1;
+; 0000 012B             COT5 =1;
 	RCALL SUBOPT_0x7
-; 0000 012E             COT6 =1;
-; 0000 012F             COT7 =1;
-; 0000 0130             COT8 =1;
-; 0000 0131             break;
+; 0000 012C             COT6 =1;
+; 0000 012D             COT7 =1;
+; 0000 012E             COT8 =1;
+; 0000 012F             break;
 	RJMP _0x6D
-; 0000 0132         }
-; 0000 0133          case 5:
+; 0000 0130         }
+; 0000 0131          case 5:
 _0xB2:
 	CPI  R30,LOW(0x5)
 	LDI  R26,HIGH(0x5)
 	CPC  R31,R26
 	BRNE _0xC3
-; 0000 0134         {
-; 0000 0135             COT1 =1;
+; 0000 0132         {
+; 0000 0133             COT1 =1;
 	SBI  0x18,4
-; 0000 0136             COT2 =1;
+; 0000 0134             COT2 =1;
 	SBI  0x18,5
-; 0000 0137             COT3 =1;
+; 0000 0135             COT3 =1;
 	SBI  0x18,6
-; 0000 0138             COT4 =1;
+; 0000 0136             COT4 =1;
 	SBI  0x18,7
-; 0000 0139             COT5 =0;
+; 0000 0137             COT5 =0;
 	CBI  0x12,0
-; 0000 013A             COT6 =1;
+; 0000 0138             COT6 =1;
 	SBI  0x12,1
-; 0000 013B             COT7 =1;
+; 0000 0139             COT7 =1;
 	SBI  0x12,3
-; 0000 013C             COT8 =1;
+; 0000 013A             COT8 =1;
 	SBI  0x12,4
-; 0000 013D             break;
+; 0000 013B             break;
 	RJMP _0x6D
-; 0000 013E         }
-; 0000 013F          case 6:
+; 0000 013C         }
+; 0000 013D          case 6:
 _0xC3:
 	CPI  R30,LOW(0x6)
 	LDI  R26,HIGH(0x6)
 	CPC  R31,R26
 	BRNE _0xD4
-; 0000 0140         {
-; 0000 0141             COT1 =1;
+; 0000 013E         {
+; 0000 013F             COT1 =1;
 	SBI  0x18,4
-; 0000 0142             COT2 =1;
+; 0000 0140             COT2 =1;
 	RCALL SUBOPT_0x6
-; 0000 0143             COT3 =1;
-; 0000 0144             COT4 =1;
-; 0000 0145             COT5 =1;
-; 0000 0146             COT6 =0;
+; 0000 0141             COT3 =1;
+; 0000 0142             COT4 =1;
+; 0000 0143             COT5 =1;
+; 0000 0144             COT6 =0;
 	CBI  0x12,1
-; 0000 0147             COT7 =1;
+; 0000 0145             COT7 =1;
 	SBI  0x12,3
-; 0000 0148             COT8 =1;
+; 0000 0146             COT8 =1;
 	SBI  0x12,4
-; 0000 0149             break;
+; 0000 0147             break;
 	RJMP _0x6D
-; 0000 014A         }
-; 0000 014B          case 7:
+; 0000 0148         }
+; 0000 0149          case 7:
 _0xD4:
 	CPI  R30,LOW(0x7)
 	LDI  R26,HIGH(0x7)
 	CPC  R31,R26
 	BRNE _0xE5
-; 0000 014C         {
-; 0000 014D             COT1 =1;
+; 0000 014A         {
+; 0000 014B             COT1 =1;
 	SBI  0x18,4
-; 0000 014E             COT2 =1;
+; 0000 014C             COT2 =1;
 	RCALL SUBOPT_0x6
-; 0000 014F             COT3 =1;
-; 0000 0150             COT4 =1;
-; 0000 0151             COT5 =1;
-; 0000 0152             COT6 =1;
+; 0000 014D             COT3 =1;
+; 0000 014E             COT4 =1;
+; 0000 014F             COT5 =1;
+; 0000 0150             COT6 =1;
 	SBI  0x12,1
-; 0000 0153             COT7 =0;
+; 0000 0151             COT7 =0;
 	CBI  0x12,3
-; 0000 0154             COT8 =1;
+; 0000 0152             COT8 =1;
 	SBI  0x12,4
-; 0000 0155             break;
+; 0000 0153             break;
 	RJMP _0x6D
-; 0000 0156         }
-; 0000 0157          case 8:
+; 0000 0154         }
+; 0000 0155          case 8:
 _0xE5:
 	CPI  R30,LOW(0x8)
 	LDI  R26,HIGH(0x8)
 	CPC  R31,R26
 	BRNE _0x6D
-; 0000 0158         {
-; 0000 0159             COT1 =1;
+; 0000 0156         {
+; 0000 0157             COT1 =1;
 	SBI  0x18,4
-; 0000 015A             COT2 =1;
+; 0000 0158             COT2 =1;
 	RCALL SUBOPT_0x6
-; 0000 015B             COT3 =1;
-; 0000 015C             COT4 =1;
-; 0000 015D             COT5 =1;
-; 0000 015E             COT6 =1;
+; 0000 0159             COT3 =1;
+; 0000 015A             COT4 =1;
+; 0000 015B             COT5 =1;
+; 0000 015C             COT6 =1;
 	SBI  0x12,1
-; 0000 015F             COT7 =1;
+; 0000 015D             COT7 =1;
 	SBI  0x12,3
-; 0000 0160             COT8 =0;
+; 0000 015E             COT8 =0;
 	CBI  0x12,4
-; 0000 0161             break;
-; 0000 0162         }
-; 0000 0163     }
+; 0000 015F             break;
+; 0000 0160         }
+; 0000 0161     }
 _0x6D:
-; 0000 0164 }
+; 0000 0162 }
 _0x2000003:
 	ADIW R28,1
 	RET
 ; .FEND
 ;
 ;void _HienThiLed(signed char CacSo[])
-; 0000 0167 {
+; 0000 0165 {
 __HienThiLed:
 ; .FSTART __HienThiLed
-; 0000 0168     signed char a[8];
-; 0000 0169     char i;
-; 0000 016A 
-; 0000 016B     for(i=0;i<=7;i++)
+; 0000 0166     signed char a[8];
+; 0000 0167     char i;
+; 0000 0168 
+; 0000 0169     for(i=0;i<=7;i++)
 	ST   -Y,R27
 	ST   -Y,R26
 	SBIW R28,8
@@ -2058,8 +2056,8 @@ __HienThiLed:
 _0x108:
 	CPI  R17,8
 	BRSH _0x109
-; 0000 016C     {
-; 0000 016D         a[i] =MaLed[CacSo[i]];
+; 0000 016A     {
+; 0000 016B         a[i] =MaLed[CacSo[i]];
 	MOV  R30,R17
 	LDI  R31,0
 	MOVW R26,R28
@@ -2079,18 +2077,18 @@ _0x108:
 	LD   R30,Z
 	MOVW R26,R0
 	ST   X,R30
-; 0000 016E     }
+; 0000 016C     }
 	SUBI R17,-1
 	RJMP _0x108
 _0x109:
-; 0000 016F 
-; 0000 0170     for(i=0;i<=7;i++)
+; 0000 016D 
+; 0000 016E     for(i=0;i<=7;i++)
 	LDI  R17,LOW(0)
 _0x10B:
 	CPI  R17,8
 	BRSH _0x10C
-; 0000 0171     {
-; 0000 0172         PORTC =a[i];
+; 0000 016F     {
+; 0000 0170         PORTC =a[i];
 	MOV  R30,R17
 	LDI  R31,0
 	MOVW R26,R28
@@ -2099,137 +2097,137 @@ _0x10B:
 	ADC  R27,R31
 	LD   R30,X
 	OUT  0x15,R30
-; 0000 0173         _QuetCot(i+1);
+; 0000 0171         _QuetCot(i+1);
 	MOV  R26,R17
 	SUBI R26,-LOW(1)
 	RCALL __QuetCot
-; 0000 0174         delay_ms(1);
+; 0000 0172         delay_ms(1);
 	LDI  R26,LOW(1)
 	LDI  R27,0
 	CALL _delay_ms
-; 0000 0175         _QuetCot(0);
+; 0000 0173         _QuetCot(0);
 	LDI  R26,LOW(0)
 	RCALL __QuetCot
-; 0000 0176     }
+; 0000 0174     }
 	SUBI R17,-1
 	RJMP _0x10B
 _0x10C:
-; 0000 0177 }
+; 0000 0175 }
 	LDD  R17,Y+0
 	ADIW R28,11
 	RET
 ; .FEND
 ;
 ;void _DenXanh11(void)
-; 0000 017A {
+; 0000 0178 {
 __DenXanh11:
 ; .FSTART __DenXanh11
-; 0000 017B    DenXanh11 =1;
+; 0000 0179    DenXanh11 =1;
 	SBI  0x1B,0
-; 0000 017C    DenXanh12 =1;
+; 0000 017A    DenXanh12 =1;
 	SBI  0x1B,6
-; 0000 017D    DenVang11 =0;
+; 0000 017B    DenVang11 =0;
 	CBI  0x1B,1
-; 0000 017E    DenVang12 =0;
+; 0000 017C    DenVang12 =0;
 	CBI  0x1B,7
-; 0000 017F    DenDo11 =0;
+; 0000 017D    DenDo11 =0;
 	RJMP _0x2000002
-; 0000 0180    DenDo12 =0;
-; 0000 0181 }
+; 0000 017E    DenDo12 =0;
+; 0000 017F }
 ; .FEND
 ;void _DenVang11(void)
-; 0000 0183 {
+; 0000 0181 {
 __DenVang11:
 ; .FSTART __DenVang11
-; 0000 0184    DenXanh11 =0;
+; 0000 0182    DenXanh11 =0;
 	CBI  0x1B,0
-; 0000 0185    DenXanh12 =0;
+; 0000 0183    DenXanh12 =0;
 	CBI  0x1B,6
-; 0000 0186    DenVang11 =1;
+; 0000 0184    DenVang11 =1;
 	SBI  0x1B,1
-; 0000 0187    DenVang12 =1;
+; 0000 0185    DenVang12 =1;
 	SBI  0x1B,7
-; 0000 0188    DenDo11 =0;
+; 0000 0186    DenDo11 =0;
 _0x2000002:
 	CBI  0x1B,2
-; 0000 0189    DenDo12 =0;
+; 0000 0187    DenDo12 =0;
 	CBI  0x18,0
-; 0000 018A }
+; 0000 0188 }
 	RET
 ; .FEND
 ;void _DenDo11(void)
-; 0000 018C {
+; 0000 018A {
 __DenDo11:
 ; .FSTART __DenDo11
-; 0000 018D    DenXanh11 =0;
+; 0000 018B    DenXanh11 =0;
 	CBI  0x1B,0
-; 0000 018E    DenXanh12 =0;
+; 0000 018C    DenXanh12 =0;
 	CBI  0x1B,6
-; 0000 018F    DenVang11 =0;
+; 0000 018D    DenVang11 =0;
 	CBI  0x1B,1
-; 0000 0190    DenVang12 =0;
+; 0000 018E    DenVang12 =0;
 	CBI  0x1B,7
-; 0000 0191    DenDo11 =1;
+; 0000 018F    DenDo11 =1;
 	SBI  0x1B,2
-; 0000 0192    DenDo12 =1;
+; 0000 0190    DenDo12 =1;
 	SBI  0x18,0
-; 0000 0193 }
+; 0000 0191 }
 	RET
 ; .FEND
 ;void _DenXanh21(void)
-; 0000 0195 {
+; 0000 0193 {
 __DenXanh21:
 ; .FSTART __DenXanh21
-; 0000 0196     DenXanh21 =1;
+; 0000 0194     DenXanh21 =1;
 	SBI  0x1B,3
-; 0000 0197     DenXanh22 =1;
+; 0000 0195     DenXanh22 =1;
 	SBI  0x18,3
-; 0000 0198     DenVang21 =0;
+; 0000 0196     DenVang21 =0;
 	CBI  0x1B,4
-; 0000 0199     DenVang22 =0;
+; 0000 0197     DenVang22 =0;
 	CBI  0x18,2
-; 0000 019A     DenDo21 =0;
+; 0000 0198     DenDo21 =0;
 	RJMP _0x2000001
-; 0000 019B     DenDo22 =0;
-; 0000 019C }
+; 0000 0199     DenDo22 =0;
+; 0000 019A }
 ; .FEND
 ;void _DenVang21(void)
-; 0000 019E {
+; 0000 019C {
 __DenVang21:
 ; .FSTART __DenVang21
-; 0000 019F     DenXanh21 =0;
+; 0000 019D     DenXanh21 =0;
 	CBI  0x1B,3
-; 0000 01A0     DenXanh22 =0;
+; 0000 019E     DenXanh22 =0;
 	CBI  0x18,3
-; 0000 01A1     DenVang21 =1;
+; 0000 019F     DenVang21 =1;
 	SBI  0x1B,4
-; 0000 01A2     DenVang22 =1;
+; 0000 01A0     DenVang22 =1;
 	SBI  0x18,2
-; 0000 01A3     DenDo21 =0;
+; 0000 01A1     DenDo21 =0;
 _0x2000001:
 	CBI  0x1B,5
-; 0000 01A4     DenDo22 =0;
+; 0000 01A2     DenDo22 =0;
 	CBI  0x18,1
-; 0000 01A5 }
+; 0000 01A3 }
 	RET
 ; .FEND
 ;void _DenDo21(void)
-; 0000 01A7 {
+; 0000 01A5 {
 __DenDo21:
 ; .FSTART __DenDo21
-; 0000 01A8     DenXanh21 =0;
+; 0000 01A6     DenXanh21 =0;
 	CBI  0x1B,3
-; 0000 01A9     DenXanh22 =0;
+; 0000 01A7     DenXanh22 =0;
 	CBI  0x18,3
-; 0000 01AA     DenVang21 =0;
+; 0000 01A8     DenVang21 =0;
 	CBI  0x1B,4
-; 0000 01AB     DenVang22 =0;
+; 0000 01A9     DenVang22 =0;
 	CBI  0x18,2
-; 0000 01AC     DenDo21 =1;
+; 0000 01AA     DenDo21 =1;
 	SBI  0x1B,5
-; 0000 01AD     DenDo22 =1;
+; 0000 01AB     DenDo22 =1;
 	SBI  0x18,1
-; 0000 01AE }
+; 0000 01AC }
 	RET
 ; .FEND
 

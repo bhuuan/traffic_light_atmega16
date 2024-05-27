@@ -54,8 +54,6 @@ void _DenXanh21(void);
 void _DenVang21(void);
 void _DenDo21(void);
 
-//-----------------------CHUONG TRINH NGAT---------------------------
-
 //NGAT INT0
 interrupt [EXT_INT0] void ext_int0_isr(void)
 {
@@ -235,7 +233,7 @@ while (1)
       }
 }
 
-//-------------------VIET CHUONG TRINH CON-----------------------------
+//-------------------CHUONG TRINH CON-----------------------------
 void _TachSo(signed char Dem, signed char *Chuc, signed char *DonVi)
 {
     *Chuc = Dem/10;
@@ -356,6 +354,7 @@ void _QuetCot(char TenCot)
         }
     }
 }
+
 void _HienThiLed(signed char CacSo[])
 {
     signed char a[8];
@@ -374,6 +373,7 @@ void _HienThiLed(signed char CacSo[])
         _QuetCot(0);
     }
 }
+
 void _DenXanh11(void)
 {
    DenXanh11 =1;

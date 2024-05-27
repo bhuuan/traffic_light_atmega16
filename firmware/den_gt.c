@@ -17,9 +17,7 @@
 #define DenDo21     PORTA.5
 #define DenDo22     PORTB.1
 
-#define MENU        PIND.2
-#define TANG        PIND.5
-#define GIAM        PIND.6
+#define MODE        PIND.2
 
 #define COT1        PORTB.4
 #define COT2        PORTB.5
@@ -57,9 +55,9 @@ void _DenDo21(void);
 //NGAT INT0
 interrupt [EXT_INT0] void ext_int0_isr(void)
 {
-  if((PIND & (1<<PIND2))== 0)
+  if(MODE == 0)
   { 
-        while((PIND & (1<<PIND2))== 0);
+        while(MODE == 0);
         CheDo = CheDo + 1; 
         if(CheDo > 1)
         {
