@@ -1,0 +1,7 @@
+VERSION:3 SOURCE_TIMESTAMP:58BC05CE
+NODE:M LEVEL:0 LINE:1 "_Timer_h_"
+NODE:I LEVEL:0 LINE:2 "C:\cvavr\inc\mega16a.h"
+NODE:F LEVEL:0 LINE:13 "_KhoiTaoTimer0(void)"
+NODE:F LEVEL:0 LINE:32 "_KhoiTaoTimer1(void)"
+NODE:F LEVEL:0 LINE:54 "_KhoiTaoTimer2(void)"
+NODE:F LEVEL:0 LINE:76 "_NgatToanCuc(unsigned char TrangThai)"

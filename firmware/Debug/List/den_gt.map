@@ -1,0 +1,47 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+MaLed                                                                             0x0160      10
+DemDo1                                                                            0x016A       1
+DemXanh2                                                                          0x016B       1
+DemVang2                                                                          0x016C       1
+DemDo2                                                                            0x016D       1
+TenDuong                                                                          0x016E       1
+CheDo                                                                             0x016F       1
+Flag                                                                              0x0170       1
+CacSo                                                                             0x0171       8
+Dem                                                                               0x0179       2
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+Delay                                                                             R4,R5        2
+Xanh1                                                                             R7           1
+Vang1                                                                             R6           1
+Do1                                                                               R9           1
+Xanh2                                                                             R8           1
+Vang2                                                                             R11          1
+Do2                                                                               R10          1
+DemXanh1                                                                          R13          1
+DemVang1                                                                          R12          1
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+_KhoiTaoTimer0                                                                    0x00067     10
+_NgatToanCuc                                                                      0x00071     13
+_KhoiTaoNgatINT0                                                                  0x0007E     10
+ext_int0_isr                                                                      0x00088     28
+timer0_ovf_isr                                                                    0x000A4    202
+main                                                                              0x0016E     58
+_TachSo                                                                           0x001A8     16
+_QuetCot                                                                          0x001B8     91
+_HienThiLed                                                                       0x00213     53
+_DenVang11                                                                        0x0024D      7
+_DenDo11                                                                          0x00254      7
+_DenVang21                                                                        0x00260      7
+_DenDo21                                                                          0x00267      7
