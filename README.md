@@ -1,1 +1,1 @@
-![](doc/flowchart.png)
+![](docs/flowchart.png)
